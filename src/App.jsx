@@ -1,5 +1,9 @@
 import './App.css'
 import { useState } from 'react'
+import { Bar } from 'react-chartjs-2'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend} from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function App() {
 
@@ -25,12 +29,31 @@ function App() {
     setAmount('');
     setDate('');
   }
+  const data = {
+    labels: expenses.map((item) => item.expense),
+    datasets: [
+        {
+          label: 'Amount',
+          data: expenses.map((item) => item.amount),
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+        }
+    ]
+  }
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {position: 'top'},
+      title: { display: true, text: 'Expenses Bar Chart'}
+    }
+  };
 
   return (
     <>
       <div>
         <div>
-          <label>Expenses</label>
+          <label>List of Expenses:</label>
           {
             expenses.map((item)=>(
               <li key={item.id}>
@@ -39,14 +62,29 @@ function App() {
             ))
           }
         </div>
-        <input placeholder='Expense' required type='text' value={expense} 
-          onChange={(e) => setExpense(e.target.value)}></input><br/>
-        <input placeholder='Amount' required type='number' value={amount}
-          onChange={(e) => setAmount(e.target.value)}></input><br/>
-        <input placeholder='Date' required type='date' value={date}
-          onChange={(e) => setDate(e.target.value)}></input><br/>
+        <div>
+          <label>Input an Expense</label><br/>
+          <input placeholder='Expense' required type='text' value={expense} 
+            onChange={(e) => setExpense(e.target.value)}></input><br/>
+          <input placeholder='Amount' required type='number' value={amount}
+            onChange={(e) => setAmount(e.target.value)}></input><br/>
+          <input placeholder='Date' required type='date' value={date}
+            onChange={(e) => setDate(e.target.value)}></input><br/>
 
-        <button onClick={addExpense}>Add</button>
+          <button onClick={addExpense}>Add</button>
+        </div>
+
+      </div>
+      <div>
+        <label>Analyze Finance</label>
+        {
+          expenses.length > 0 ? (
+
+            <Bar data={data} options={options} />
+          ) : (
+            <p>No expenses available</p>
+          )
+        }
       </div>
       <button>Expenses</button>
       <button>Visualize</button>
