@@ -46,11 +46,11 @@ Follow these steps to get the project running locally:
     npm install
     ```
 
-**4. Start the app: Run the development server using Vite:**
+4. **Start the app: Run the development server using Vite:**
 
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
 The app will open in your browser at http://localhost:5173 (default Vite port).
 
