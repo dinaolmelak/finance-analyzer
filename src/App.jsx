@@ -13,6 +13,7 @@ function App() {
   const [expense, setExpense] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
+  const [error, setError] = useState('');
   const [expenses, setExpenses] = useState([]);
 
   const handleFlipClick = (e) => {
@@ -24,11 +25,36 @@ function App() {
     setIsListFlipped((prevState)=> !prevState);
   }
   function addExpense() {
-    if(!expense || !amount || !date || isNaN(amount)){
-      alert("Please fill out all input.");
+    // Reset error state
+    setError('');
+
+    // Validate input fields
+    if (!expense || expense.trim() === '') {
+      setError('Please enter Expense name.');
       return;
     }
-    console.log("Add expense");
+
+    if (!amount || isNaN(amount) || Number(amount) < 0) {
+      setError('Please enter valid non-negative amount.');
+      return;
+    }
+
+    if (!date || isNaN(new Date(date).getTime())) {
+      setError('Please enter a valid date.');
+      return;
+    }
+
+    // Ensure the date is not in the future
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate > today) {
+      setError('Date cannot be in the future.');
+      return;
+    }
+
+
     const newExpense = {
       id: Date.now(), 
       expense, 
@@ -63,7 +89,7 @@ function App() {
   return (
     <>
       <div className='card-container'>
-        <CustomCard>
+        <CustomCard >
           <div>
             <ReactCardFlip isFlipped={isFlipped} flipDirection='horizontal'>
               <div className='card-front'>
@@ -103,6 +129,7 @@ function App() {
                       </div>
                   <div>
                     <h2>Input an Expense</h2><br/>
+                    {error && <div style={{ color: 'red' }}>{error}</div>}
                     <input placeholder='Expense' required type='text' value={expense} 
                       onChange={(e) => setExpense(e.target.value)}></input><br/>
                     <input placeholder='Amount' required type='number' value={amount}
@@ -114,7 +141,7 @@ function App() {
                   </div>
                 </ReactCardFlip>
                 <CustomCard>
-                  <button onClick={handleListFlipClick}>{(isListFlipped==false)?"Add Expenses":"All Expenses"}</button>
+                  <button onClick={handleListFlipClick}>{(isListFlipped==false)?"Add Expenses":"View Expenses"}</button>
                 </CustomCard>
               </div>
 
@@ -136,7 +163,7 @@ function App() {
           </div>
         </CustomCard>
         <CustomCard>
-          <button onClick={handleFlipClick}>{(isFlipped == false) ? "Visualize" : "Expense" }</button>
+          <button onClick={handleFlipClick}>{(isFlipped == false) ? "Visualize Spending" : "Expenses" }</button>
         </CustomCard>
       </div>
     </> 
